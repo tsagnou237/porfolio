@@ -11,8 +11,13 @@ python manage.py runserver
 
 Pour reconstruire le CSS après une modification, installe les dépendances Node puis lance `npm run css:build`.
 
-## Déploiement Render
+## Déploiement KENN HOSTING
 
-Le fichier `render.yaml` configure le service web Render à partir de la branche `main`. Dans Render, crée une **New Blueprint Instance**, connecte le dépôt `tsagnou237/porfolio`, puis applique le Blueprint. Render installe les dépendances, collecte les fichiers statiques, applique les migrations et démarre Gunicorn. La clé Django de production est générée automatiquement.
+Connecter le dépôt GitHub `tsagnou237/porfolio` sur la branche `main`, puis sélectionner Django.
 
-Pour un domaine personnalisé, ajoute le nom d’hôte dans `DJANGO_ALLOWED_HOSTS` et son origine HTTPS dans `DJANGO_CSRF_TRUSTED_ORIGINS`.
+- Installation : `pip install -r requirements.txt`
+- Build : `python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+- Démarrage : `gunicorn portfolio_site.wsgi:application --bind 0.0.0.0:$PORT`
+- Variables requises : `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS=.kennhosting.app`, et une clé secrète `DJANGO_SECRET_KEY` marquée comme secret.
+
+Les assets statiques sont servis par WhiteNoise. Le portfolio n’a pas besoin de base de données externe.

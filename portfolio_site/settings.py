@@ -5,11 +5,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-development-key-change-before-deployment")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in {"1", "true", "yes"}
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()]
-RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+KENN_APP_HOSTNAME = os.environ.get("KENN_APP_HOSTNAME")
+if KENN_APP_HOSTNAME:
+    ALLOWED_HOSTS.append(KENN_APP_HOSTNAME)
 
-CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host not in {"localhost", "127.0.0.1"}]
+CSRF_TRUSTED_ORIGINS = [
+    f"https://*.{host[1:]}" if host.startswith(".") else f"https://{host}"
+    for host in ALLOWED_HOSTS
+    if host not in {"localhost", "127.0.0.1"}
+]
 CSRF_TRUSTED_ORIGINS.extend(
     origin.strip()
     for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
