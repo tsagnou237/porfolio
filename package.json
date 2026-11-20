@@ -1,0 +1,13 @@
+{
+  "name": "steve-varrel-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "css:watch": "@tailwindcss/cli -i ./static/portfolio/css/input.css -o ./static/portfolio/css/site.css --watch",
+    "css:build": "@tailwindcss/cli -i ./static/portfolio/css/input.css -o ./static/portfolio/css/site.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

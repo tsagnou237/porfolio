@@ -1,0 +1,11 @@
+{% load static %}
+{% if project.cover_image %}
+  <img class="project-cover project-cover-{{ project.visual }}" src="{% static project.secondary_image|default:project.cover_image %}" alt="{{ project.secondary_image_alt|default:project.image_alt }}" loading="lazy" decoding="async" />
+  <span class="project-cover-shade" aria-hidden="true"></span>
+  <span class="project-image-label" data-fr="{{ project.secondary_image_label|default:project.image_label }}" data-en="{{ project.secondary_image_label_en|default:project.image_label_en }}">{{ project.secondary_image_label|default:project.image_label }}</span>
+  {% if project.secondary_image %}<span class="project-image-inset"><img src="{% static project.cover_image %}" alt="{{ project.image_alt }}" loading="lazy" decoding="async" /><span data-fr="{{ project.image_label }}" data-en="{{ project.image_label_en }}">{{ project.image_label }}</span></span>{% endif %}
+  <span class="visual-index">{{ project.number }} / WEB</span>
+  <span class="visual-cta">↗</span>
+{% else %}
+  <span class="visual-orb"></span><span class="visual-word">{{ project.name }}</span><span class="visual-index">{{ project.number }} / WEB</span><span class="visual-cta">↗</span>
+{% endif %}

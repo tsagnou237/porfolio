@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
+.env
+staticfiles/
+
+node_modules/
+.pnpm-store/
+
