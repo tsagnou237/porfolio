@@ -214,43 +214,80 @@ const dailyCurrent = document.querySelector('[data-daily-current]');
 const dailyProgress = document.querySelector('.daily-tools-progress-line i');
 const dailySection = document.querySelector('.daily-tools');
 const dailyLayout = document.querySelector('.daily-tools-layout');
-if (dailyTools.length && dailySection && dailyLayout && !reducedMotion.matches) {
-  dailySection.classList.add('is-sequenced');
-  dailySection.style.setProperty('--daily-sequence-length', `${dailyTools.length * 42}svh`);
-  let dailySequenceFrame = 0;
-  const updateDailySequence = () => {
-    cancelAnimationFrame(dailySequenceFrame);
-    dailySequenceFrame = requestAnimationFrame(() => {
-      const travel = dailySection.offsetHeight - dailyLayout.offsetHeight;
-      const progress = travel > 0
-        ? Math.min(1, Math.max(0, -dailySection.getBoundingClientRect().top / travel))
-        : 0;
-      const currentIndex = Math.min(dailyTools.length - 1, Math.floor(progress * dailyTools.length));
-      dailyTools.forEach((tool, index) => {
-        tool.classList.toggle('is-active', index === currentIndex);
-        tool.classList.toggle('is-complete', index < currentIndex);
-      });
-      if (dailyCurrent) dailyCurrent.textContent = String(currentIndex + 1).padStart(2, '0');
-      if (dailyProgress) dailyProgress.style.transform = `scaleX(${(currentIndex + 1) / dailyTools.length})`;
+if (dailyTools.length && dailySection && dailyLayout) {
+  const dailyWheel = dailySection.querySelector('.daily-tools-list');
+  const wheelCenter = document.createElement('div');
+  wheelCenter.className = 'daily-wheel-center';
+  wheelCenter.setAttribute('aria-live', 'polite');
+  wheelCenter.innerHTML = '<span class="daily-wheel-caption" data-fr="OUTIL ACTIF" data-en="ACTIVE TOOL">OUTIL ACTIF</span><span class="daily-wheel-active-mark" data-daily-active-mark></span><strong data-daily-active-label></strong><span class="daily-wheel-active-count" data-daily-active-count></span>';
+  dailyWheel?.append(wheelCenter);
+  dailySection.classList.add('is-wheel');
+
+  const setDailyState = (currentIndex, progress = currentIndex / dailyTools.length) => {
+    const activeTool = dailyTools[currentIndex];
+    dailyTools.forEach((tool, index) => {
+      tool.classList.toggle('is-active', index === currentIndex);
+      tool.classList.toggle('is-complete', index < currentIndex);
     });
+    if (dailyCurrent) dailyCurrent.textContent = String(currentIndex + 1).padStart(2, '0');
+    if (dailyProgress) dailyProgress.style.transform = `scaleX(${(currentIndex + 1) / dailyTools.length})`;
+    const activeLabel = wheelCenter?.querySelector('[data-daily-active-label]');
+    const activeMark = wheelCenter?.querySelector('[data-daily-active-mark]');
+    const activeCount = wheelCenter?.querySelector('[data-daily-active-count]');
+    if (activeLabel && activeTool) activeLabel.textContent = activeTool.querySelector('h3')?.textContent ?? '';
+    if (activeMark && activeTool) {
+      const mark = activeTool.querySelector('.daily-tool-mark');
+      if (mark && activeMark.dataset.index !== String(currentIndex)) {
+        activeMark.replaceChildren(mark.cloneNode(true));
+        activeMark.dataset.index = String(currentIndex);
+      }
+    }
+    if (activeCount) activeCount.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(dailyTools.length).padStart(2, '0')}`;
+
+    if (dailyWheel) {
+      const radius = Math.min(dailyWheel.clientWidth * 0.32, window.innerHeight * 0.24);
+      const rotation = -progress * Math.PI * 2;
+      dailyTools.forEach((tool, index) => {
+        const angle = -Math.PI / 2 + index * Math.PI * 2 / dailyTools.length + rotation;
+        tool.style.setProperty('--wheel-x', `${Math.cos(angle) * radius}px`);
+        tool.style.setProperty('--wheel-y', `${Math.sin(angle) * radius}px`);
+      });
+      dailyWheel.style.setProperty('--wheel-rotation', `${-progress * 360}deg`);
+    }
   };
-  window.addEventListener('scroll', updateDailySequence, { passive: true });
-  window.addEventListener('resize', updateDailySequence);
-  updateDailySequence();
-} else if (dailyTools.length && 'IntersectionObserver' in window) {
+
+  if (!reducedMotion.matches) {
+    dailySection.classList.add('is-sequenced');
+    dailySection.style.setProperty('--daily-sequence-length', `${dailyTools.length * 52}svh`);
+    let dailySequenceFrame = 0;
+    const updateDailySequence = () => {
+      cancelAnimationFrame(dailySequenceFrame);
+      dailySequenceFrame = requestAnimationFrame(() => {
+        const travel = dailySection.offsetHeight - dailyLayout.offsetHeight;
+        const progress = travel > 0
+          ? Math.min(1, Math.max(0, -dailySection.getBoundingClientRect().top / travel))
+          : 0;
+        const currentIndex = Math.min(dailyTools.length - 1, Math.floor(progress * dailyTools.length));
+        setDailyState(currentIndex, progress);
+      });
+    };
+    window.addEventListener('scroll', updateDailySequence, { passive: true });
+    window.addEventListener('resize', updateDailySequence);
+    updateDailySequence();
+  } else {
+    setDailyState(0, 0);
+    window.addEventListener('resize', () => setDailyState(Number(dailyCurrent?.textContent ?? 1) - 1));
+  }
+
+  if (reducedMotion.matches && 'IntersectionObserver' in window) {
   const dailyToolsObserver = new IntersectionObserver((entries) => {
     const visibleEntry = entries
       .filter((entry) => entry.isIntersecting)
       .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
     if (!visibleEntry) return;
     const currentIndex = Number(visibleEntry.target.dataset.dailyIndex);
-    dailyTools.forEach((tool) => {
-      const index = Number(tool.dataset.dailyIndex);
-      tool.classList.toggle('is-active', tool === visibleEntry.target);
-      tool.classList.toggle('is-complete', index < currentIndex);
-    });
-    if (dailyCurrent) dailyCurrent.textContent = String(currentIndex).padStart(2, '0');
-    if (dailyProgress) dailyProgress.style.transform = `scaleX(${currentIndex / dailyTools.length})`;
+    setDailyState(currentIndex - 1, currentIndex / dailyTools.length);
   }, { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
   dailyTools.forEach((tool) => dailyToolsObserver.observe(tool));
+  }
 }
