@@ -212,14 +212,43 @@ moveFooterSignature();
 const dailyTools = document.querySelectorAll('[data-daily-tool]');
 const dailyCurrent = document.querySelector('[data-daily-current]');
 const dailyProgress = document.querySelector('.daily-tools-progress-line i');
-if (dailyTools.length && 'IntersectionObserver' in window) {
+const dailySection = document.querySelector('.daily-tools');
+const dailyLayout = document.querySelector('.daily-tools-layout');
+if (dailyTools.length && dailySection && dailyLayout && !reducedMotion.matches) {
+  dailySection.classList.add('is-sequenced');
+  dailySection.style.setProperty('--daily-sequence-length', `${dailyTools.length * 42}svh`);
+  let dailySequenceFrame = 0;
+  const updateDailySequence = () => {
+    cancelAnimationFrame(dailySequenceFrame);
+    dailySequenceFrame = requestAnimationFrame(() => {
+      const travel = dailySection.offsetHeight - dailyLayout.offsetHeight;
+      const progress = travel > 0
+        ? Math.min(1, Math.max(0, -dailySection.getBoundingClientRect().top / travel))
+        : 0;
+      const currentIndex = Math.min(dailyTools.length - 1, Math.floor(progress * dailyTools.length));
+      dailyTools.forEach((tool, index) => {
+        tool.classList.toggle('is-active', index === currentIndex);
+        tool.classList.toggle('is-complete', index < currentIndex);
+      });
+      if (dailyCurrent) dailyCurrent.textContent = String(currentIndex + 1).padStart(2, '0');
+      if (dailyProgress) dailyProgress.style.transform = `scaleX(${(currentIndex + 1) / dailyTools.length})`;
+    });
+  };
+  window.addEventListener('scroll', updateDailySequence, { passive: true });
+  window.addEventListener('resize', updateDailySequence);
+  updateDailySequence();
+} else if (dailyTools.length && 'IntersectionObserver' in window) {
   const dailyToolsObserver = new IntersectionObserver((entries) => {
     const visibleEntry = entries
       .filter((entry) => entry.isIntersecting)
       .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
     if (!visibleEntry) return;
     const currentIndex = Number(visibleEntry.target.dataset.dailyIndex);
-    dailyTools.forEach((tool) => tool.classList.toggle('is-active', tool === visibleEntry.target));
+    dailyTools.forEach((tool) => {
+      const index = Number(tool.dataset.dailyIndex);
+      tool.classList.toggle('is-active', tool === visibleEntry.target);
+      tool.classList.toggle('is-complete', index < currentIndex);
+    });
     if (dailyCurrent) dailyCurrent.textContent = String(currentIndex).padStart(2, '0');
     if (dailyProgress) dailyProgress.style.transform = `scaleX(${currentIndex / dailyTools.length})`;
   }, { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });

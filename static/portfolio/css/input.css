@@ -439,3 +439,20 @@ main section.is-in-view .method-eyebrow:after{content:"";display:inline-block;wi
 .project-card:hover .project-image-inset{animation-play-state:paused}
 @media(max-width:767px){.portrait-tag{animation:tag-enter .8s .35s both}.project-image-inset{animation-duration:7s}.project-card.reveal{translate:0 24px;scale:.98}.method-step.reveal,.timeline-item.reveal{translate:0 18px}}
 @media(prefers-reduced-motion:reduce){.portrait-tag,.project-image-inset{animation:none!important}main section.is-in-view>.section-wrap>.eyebrow:after,main section.is-in-view .method-eyebrow:after{animation:none!important;transform:none!important}}
+
+/* Keep the tools chapter pinned while its six entries advance in order. */
+@keyframes daily-tool-arrive{from{opacity:.55;translate:0 12px;filter:blur(4px)}to{opacity:1;translate:0 0;filter:blur(0)}}
+@keyframes daily-mark-pop{0%{scale:.86;rotate:-8deg}70%{scale:1.1;rotate:2deg}100%{scale:1;rotate:0}}
+.daily-tools.is-sequenced{height:calc(100svh + var(--daily-sequence-length,252svh));overflow:visible}
+.daily-tools.is-sequenced .daily-tools-layout{position:sticky;top:78px;height:calc(100svh - 78px);min-height:0;padding-block:clamp(22px,4vh,46px);align-items:center}
+.daily-tools.is-sequenced .daily-tools-intro{position:relative;top:auto;align-self:center}
+.daily-tool{min-height:clamp(70px,10.5vh,98px);padding-inline:0;border-radius:5px;transition:color .45s ease,opacity .45s ease,filter .45s ease,background-color .45s ease,padding .45s ease}
+.daily-tool.is-active{padding-inline:12px;background:color-mix(in srgb,var(--color-green) 7%,transparent);color:var(--color-green);filter:none;opacity:1}
+.daily-tool.is-active h3{transform:translateX(4px)}
+.daily-tool.is-active .daily-tool-mark{animation:daily-mark-pop .5s cubic-bezier(.2,.72,.24,1) both}
+.daily-tool.is-complete{filter:none;opacity:.82;color:var(--color-ink)}
+.daily-tool.is-complete .daily-tool-mark{background:color-mix(in srgb,var(--color-green) 13%,var(--color-paper))}
+.daily-tools-progress-line i{transform-origin:left center;will-change:transform}
+@media(max-width:767px){.daily-tools.is-sequenced .daily-tools-layout{top:78px;height:calc(100svh - 78px);grid-template-columns:1fr;grid-template-rows:auto 1fr;align-content:center;gap:clamp(10px,2vh,20px);padding-block:clamp(12px,2.5vh,24px)}.daily-tools.is-sequenced .daily-tools-intro{align-self:auto}.daily-tools.is-sequenced .daily-tools-intro .eyebrow{margin-bottom:10px}.daily-tools.is-sequenced .daily-tools-intro h2{max-width:420px;font-size:clamp(25px,6.5vw,34px);line-height:1.15}.daily-tools.is-sequenced .daily-tools-progress{margin-top:12px}.daily-tools.is-sequenced .daily-tool{min-height:clamp(50px,8.5svh,76px);gap:14px}.daily-tools.is-sequenced .daily-tool h3{font-size:clamp(27px,7.2vw,39px)}.daily-tools.is-sequenced .daily-tool-mark{width:36px;height:36px;flex-basis:36px;border-radius:11px}}
+@media(max-height:680px) and (max-width:767px){.daily-tools.is-sequenced .daily-tools-layout{padding-block:10px}.daily-tools.is-sequenced .daily-tool{min-height:48px}.daily-tools.is-sequenced .daily-tool h3{font-size:clamp(24px,6vw,30px)}.daily-tools.is-sequenced .daily-tool-mark{width:30px;height:30px;flex-basis:30px}}
+@media(prefers-reduced-motion:reduce){.daily-tools.is-sequenced{height:auto!important}.daily-tools.is-sequenced .daily-tools-layout{position:relative;top:auto;height:auto;min-height:100svh}.daily-tool.is-active .daily-tool-mark{animation:none!important}}
