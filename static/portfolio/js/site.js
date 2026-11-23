@@ -36,16 +36,27 @@ if (savedLanguage && savedLanguage !== document.documentElement.lang) languageBu
 
 document.querySelectorAll('.project-grid .project-card, .timeline-item, .stats-grid .stat, .method-process .method-step').forEach((item) => {
   const siblings = [...item.parentElement.children].filter((sibling) => sibling.matches('.project-card, .timeline-item, .stat, .method-step'));
-  item.style.setProperty('--reveal-delay', `${siblings.indexOf(item) * 160}ms`);
+  item.style.setProperty('--reveal-delay', `${siblings.indexOf(item) * 130}ms`);
 });
-const revealObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    entry.target.classList.add('is-visible');
-    observer.unobserve(entry.target);
-  });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
+const revealElements = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+  revealElements.forEach((element) => revealObserver.observe(element));
+} else {
+  revealElements.forEach((element) => element.classList.add('is-visible'));
+}
+
+// Add the cover entrance only after the document is ready, so content remains
+// readable if JavaScript is disabled or delayed.
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  requestAnimationFrame(() => document.documentElement.classList.add('motion-ready'));
+}
 
 const counterObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
