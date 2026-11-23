@@ -1,6 +1,7 @@
 const menuButton = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('.nav-links');
 const languageButtons = document.querySelectorAll('.language-toggle');
+let typewriterTimer = null;
 
 menuButton?.addEventListener('click', () => {
   const isOpen = navigation.classList.toggle('open');
@@ -21,6 +22,15 @@ languageButtons.forEach((languageButton) => languageButton.addEventListener('cli
   document.querySelectorAll('[data-fr][data-en]').forEach((element) => {
     element.textContent = element.dataset[language];
   });
+  const typewriter = document.querySelector('.typewriter-output');
+  if (typewriter) {
+    clearTimeout(typewriterTimer);
+    const typewriterLine = typewriter.closest('.typewriter-line');
+    if (typewriterLine?.classList.contains('is-typing')) {
+      typewriterLine.classList.remove('is-typing');
+      typewriter.dataset.typewriterDone = 'true';
+    }
+  }
   languageButtons.forEach((button) => {
     button.textContent = language === 'fr' ? 'EN' : 'FR';
     button.setAttribute('aria-label', language === 'fr' ? 'Passer en anglais' : 'Switch to French');
@@ -56,6 +66,47 @@ if ('IntersectionObserver' in window) {
 // readable if JavaScript is disabled or delayed.
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   requestAnimationFrame(() => document.documentElement.classList.add('motion-ready'));
+}
+
+const typewriterOutput = document.querySelector('.typewriter-output');
+const typewriterLine = typewriterOutput?.closest('.typewriter-line');
+if (typewriterOutput && typewriterLine) {
+  const completeText = typewriterOutput.dataset[document.documentElement.lang === 'en' ? 'en' : 'fr'] || typewriterOutput.textContent;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (prefersReducedMotion.matches) {
+    typewriterOutput.textContent = completeText;
+  } else {
+    let typingStarted = false;
+    const beginTyping = () => {
+      if (typingStarted || typewriterOutput.dataset.typewriterDone === 'true') return;
+      typingStarted = true;
+      typewriterLine.classList.add('is-typing');
+      typewriterOutput.textContent = '';
+      const characters = Array.from(completeText);
+      let position = 0;
+      const writeNext = () => {
+        if (position >= characters.length) {
+          typewriterLine.classList.remove('is-typing');
+          typewriterOutput.dataset.typewriterDone = 'true';
+          return;
+        }
+        const character = characters[position++];
+        typewriterOutput.textContent += character;
+        typewriterTimer = window.setTimeout(writeNext, /[,.!?]/.test(character) ? 190 : 48);
+      };
+      typewriterTimer = window.setTimeout(writeNext, 320);
+    };
+    if ('IntersectionObserver' in window) {
+      const typewriterObserver = new IntersectionObserver((entries, observer) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        beginTyping();
+        observer.disconnect();
+      }, { threshold: 0.4 });
+      typewriterObserver.observe(typewriterLine);
+    } else {
+      beginTyping();
+    }
+  }
 }
 
 const counterObserver = new IntersectionObserver((entries, observer) => {

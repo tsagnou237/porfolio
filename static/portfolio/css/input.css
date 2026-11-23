@@ -476,3 +476,10 @@ main section.is-in-view .method-eyebrow:after{content:"";display:inline-block;wi
 @media(max-width:767px){.daily-tools.is-wheel .daily-tools-list{width:min(100%,55svh)}.daily-tools.is-wheel .daily-tool{width:clamp(112px,32vw,148px);min-height:52px;gap:7px;padding:7px 9px}.daily-tools.is-wheel .daily-tool.is-active{min-height:58px;padding-inline:10px}.daily-tools.is-wheel .daily-tool-mark{width:30px;height:30px;flex-basis:30px;border-radius:50%;font-size:9px}.daily-tools.is-wheel .daily-tool h3{font-size:clamp(12px,3.4vw,15px)}.daily-tools.is-wheel .daily-tool-index{right:7px;font-size:6px}.daily-wheel-center{gap:6px}.daily-wheel-active-mark{width:36px;height:36px;border-radius:12px}.daily-wheel-active-mark svg{width:19px;height:19px}.daily-wheel-caption{font-size:7px}.daily-wheel-center strong{font-size:clamp(13px,3.5vw,17px)}}
 @media(max-height:680px) and (max-width:767px){.daily-tools.is-wheel .daily-tools-list{width:min(100%,48svh)}}
 @media(prefers-reduced-motion:reduce){.daily-tools.is-wheel .daily-tool,.daily-tools.is-wheel .daily-tool.is-active{transition:none!important;scale:1!important}.daily-tools.is-wheel .daily-tools-list:after{display:none}}
+
+/* Type the hero promise once, with a restrained caret and a static SR label. */
+@keyframes typewriter-caret{0%,48%{opacity:1}49%,100%{opacity:0}}
+.typewriter-line{min-height:1.16em}
+.typewriter-line.is-typing .typewriter-output:after{display:inline-block;width:.055em;height:.82em;margin-left:.1em;vertical-align:-.04em;background:var(--color-green);content:"";animation:typewriter-caret .82s steps(2,end) infinite}
+@media(max-width:767px){.typewriter-line{min-height:2.32em}}
+@media(prefers-reduced-motion:reduce){.typewriter-line.is-typing .typewriter-output:after{display:none!important;animation:none!important}}
