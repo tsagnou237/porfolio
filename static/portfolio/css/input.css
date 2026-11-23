@@ -483,3 +483,26 @@ main section.is-in-view .method-eyebrow:after{content:"";display:inline-block;wi
 .typewriter-line.is-typing .typewriter-output:after{display:inline-block;width:.055em;height:.82em;margin-left:.1em;vertical-align:-.04em;background:var(--color-green);content:"";animation:typewriter-caret .82s steps(2,end) infinite}
 @media(max-width:767px){.typewriter-line{min-height:2.32em}}
 @media(prefers-reduced-motion:reduce){.typewriter-line.is-typing .typewriter-output:after{display:none!important;animation:none!important}}
+
+/* A deliberate cover reveal: greeting first, then the name, then the role. */
+@keyframes cover-greeting-reveal{0%{opacity:0;translate:0 14px;filter:blur(10px);letter-spacing:.12em;clip-path:inset(0 0 45% 0)}65%{opacity:1;filter:blur(0);clip-path:inset(0)}100%{translate:0 0;letter-spacing:-.06em}}
+@keyframes cover-name-reveal{0%{opacity:0;translate:0 28px;scale:.88;filter:blur(16px);text-shadow:0 0 0 transparent}68%{opacity:1;translate:0 -4px;scale:1.025;filter:blur(0);text-shadow:0 12px 54px color-mix(in srgb,var(--color-green) 18%,transparent)}100%{translate:0 0;scale:1;text-shadow:0 0 0 transparent}}
+.motion-ready .cover-copy>*{animation:none}
+.motion-ready .cover-copy.is-visible>.cover-eyebrow{animation:cover-content-arrive .7s .04s cubic-bezier(.2,.72,.24,1) both}
+.motion-ready .cover-copy.is-visible>.cover-welcome{animation:cover-greeting-reveal .9s .22s cubic-bezier(.2,.72,.24,1) both}
+.motion-ready .cover-copy.is-visible>.cover-title{animation:cover-name-reveal 1.15s .95s cubic-bezier(.16,.78,.24,1) both}
+.motion-ready .cover-copy.is-visible>.cover-role{animation:cover-content-arrive .8s 1.95s cubic-bezier(.2,.72,.24,1) both}
+.motion-ready .cover-scroll-cue,.motion-ready .cover-location,.motion-ready .cover-controls{animation:cover-content-arrive .7s 1.72s cubic-bezier(.2,.72,.24,1) both}
+
+/* Unify the light section surfaces around one soft paper-and-green palette. */
+:root{--portfolio-section-surface:color-mix(in srgb,var(--color-paper) 97%,var(--color-green));--portfolio-section-halo:color-mix(in srgb,var(--color-green) 7%,transparent)}
+.cover-page{background:radial-gradient(ellipse at 50% 44%,var(--portfolio-section-halo),var(--color-paper) 72%)}
+#top,#projets,#parcours{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--color-paper)}
+#outils,#methode,#apropos,#contact{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface)}
+.daily-tools{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface)}
+.method-section{--method-background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface);background:var(--method-background)}
+html[data-theme="dark"] #apropos,html[data-theme="dark"] #contact{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface)}
+html[data-theme="dark"] .daily-tools{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface)}
+html[data-theme="dark"] .method-section{--method-background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface);background:var(--method-background)}
+@media(prefers-color-scheme:dark){html[data-theme="auto"] #apropos,html[data-theme="auto"] #contact,html[data-theme="auto"] .daily-tools{background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface)}html[data-theme="auto"] .method-section{--method-background:radial-gradient(ellipse at 82% 8%,var(--portfolio-section-halo),transparent 54%),var(--portfolio-section-surface);background:var(--method-background)}}
+@media(prefers-reduced-motion:reduce){.motion-ready .cover-copy>.cover-welcome,.motion-ready .cover-copy>.cover-title,.motion-ready .cover-copy>.cover-role,.motion-ready .cover-scroll-cue,.motion-ready .cover-location,.motion-ready .cover-controls{animation:none!important;filter:none!important;clip-path:none!important}}
