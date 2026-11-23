@@ -421,3 +421,21 @@ html{scroll-snap-type:y proximity}
 .social-links a:hover,.social-icon-link:hover,.footer-icon-link:hover{transform:translateY(-3px)}
 @media(max-width:767px){.reveal{translate:0 18px;filter:blur(6px)}.hero-art.reveal{translate:0 20px;scale:.985}}
 @media(prefers-reduced-motion:reduce){.motion-ready .cover-copy>*,.motion-ready .cover-scroll-cue,.motion-ready .cover-location,.motion-ready .cover-controls{animation:none!important}.reveal,.reveal.is-visible{translate:none!important;scale:1!important;opacity:1!important;filter:none!important;transition:none!important}.social-links a:hover,.social-icon-link:hover,.footer-icon-link:hover{transform:none!important}}
+
+/* A little more energy: section accents react to the active chapter, while
+   project previews and the hero details drift independently of the scroll. */
+@keyframes hero-tag-float{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes project-preview-drift{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes chapter-accent{0%{transform:scaleX(.25);opacity:.35}100%{transform:scaleX(1);opacity:1}}
+.portrait-tag{animation:tag-enter .8s .35s both,hero-tag-float 5.2s 1.2s ease-in-out infinite}
+.tag-location{animation-delay:.55s,1.5s}
+.project-image-inset{animation:project-preview-drift 5.8s ease-in-out infinite}
+.project-image-inset-back{animation-delay:-2.9s}
+main section.is-in-view>.section-wrap>.eyebrow:after,
+main section.is-in-view .method-eyebrow:after{content:"";display:inline-block;width:clamp(22px,4vw,48px);height:1px;margin-left:10px;vertical-align:middle;background:var(--color-green);transform-origin:left;animation:chapter-accent .75s cubic-bezier(.2,.72,.24,1) both}
+.project-card.reveal{translate:0 38px;scale:.965;transition-duration:1s}
+.method-step.reveal{translate:28px 12px;scale:.985}
+.timeline-item.reveal{translate:20px 10px}
+.project-card:hover .project-image-inset{animation-play-state:paused}
+@media(max-width:767px){.portrait-tag{animation:tag-enter .8s .35s both}.project-image-inset{animation-duration:7s}.project-card.reveal{translate:0 24px;scale:.98}.method-step.reveal,.timeline-item.reveal{translate:0 18px}}
+@media(prefers-reduced-motion:reduce){.portrait-tag,.project-image-inset{animation:none!important}main section.is-in-view>.section-wrap>.eyebrow:after,main section.is-in-view .method-eyebrow:after{animation:none!important;transform:none!important}}

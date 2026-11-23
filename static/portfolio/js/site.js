@@ -147,6 +147,8 @@ const sectionLinks = document.querySelectorAll('.nav-links a[href*="#"]');
 const sectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
+    document.querySelectorAll('main section.is-in-view').forEach((section) => section.classList.remove('is-in-view'));
+    entry.target.classList.add('is-in-view');
     sectionLinks.forEach((link) => {
       const isCurrent = link.hash === `#${entry.target.id}`;
       link.classList.toggle('is-current', isCurrent);
