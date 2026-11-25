@@ -5,24 +5,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f4f6f1" />
-    <meta name="description" content="Portfolio de {{ profile.name }}, développeur full stack et ingénieur en informatique à Yaoundé, Cameroun." />
+    <meta name="description" content="{% block meta_description %}Portfolio de {{ profile.name }}, développeur full stack et ingénieur en informatique à Yaoundé, Cameroun.{% endblock %}" />
     <title>{% block title %}{{ profile.short_name }} — Développeur Full Stack{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'portfolio/css/site.css' %}?v=portfolio-motion-20261123f" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'portfolio/css/site.css' %}?v=blog-expanded-layout-v3-20261124" />
   </head>
   <body class="min-w-[320px] bg-paper font-sans text-ink antialiased">
     <div class="scroll-progress" role="progressbar" aria-label="Progression dans la page" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-    <div class="ambient-backdrop" aria-hidden="true"></div>
+    <div class="ambient-backdrop" aria-hidden="true"><span class="ambient-backdrop-orbit"></span><span class="ambient-backdrop-lines"></span></div>
     <header class="site-header sticky top-0 z-50 flex h-[78px] items-center justify-between border-b border-line bg-paper/95 px-6 backdrop-blur md:px-12 xl:px-24">
-      <a class="text-2xl font-extrabold tracking-[-.08em]" href="{% url 'portfolio:home' %}" aria-label="Accueil">SV<span class="text-green">.</span></a>
+      <a class="text-2xl font-extrabold tracking-[-.08em]" href="{% url 'portfolio:home' %}#top" aria-label="Accueil">SV<span class="text-green">.</span></a>
       <button class="menu-toggle flex flex-col gap-[5px] border-0 bg-transparent p-2 md:hidden" aria-label="Ouvrir le menu" aria-expanded="false"><span class="h-px w-[21px] bg-ink"></span><span class="h-px w-[21px] bg-ink"></span></button>
       <nav class="nav-links absolute left-0 right-0 top-[67px] hidden w-full flex-col items-start gap-5 border-b border-line bg-paper p-6 text-[11px] font-bold md:static md:flex md:flex-1 md:flex-row md:items-center md:gap-0 md:border-0 md:bg-transparent md:p-0" aria-label="Navigation principale">
         <div class="nav-primary">
+          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#top" data-fr="Accueil" data-en="Home">Accueil</a>
+          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#outils" data-fr="Outils" data-en="Tools">Outils</a>
           <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#projets" data-fr="Projets" data-en="Projects">Projets</a>
-          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#parcours" data-fr="Parcours" data-en="Journey">Parcours</a>
+          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#methode" data-fr="Méthode" data-en="Approach">Méthode</a>
           <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#apropos" data-fr="À propos" data-en="About">À propos</a>
+          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#parcours" data-fr="Parcours" data-en="Journey">Parcours</a>
+          <a class="transition hover:text-green" href="{% url 'portfolio:home' %}#blog" data-fr="Carnet" data-en="Journal">Carnet</a>
         </div>
         <div class="nav-utilities">
           <button class="language-toggle border border-line bg-transparent px-2.5 py-2 font-mono text-[10px] transition hover:border-green hover:text-green" type="button" aria-label="Passer en anglais">EN</button>
@@ -31,7 +35,7 @@
             <button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Thème sombre">☾ <span data-fr="Sombre" data-en="Dark">Sombre</span></button>
             <button type="button" data-theme-choice="auto" aria-pressed="false" aria-label="Thème automatique">◉ <span data-fr="Auto" data-en="Auto">Auto</span></button>
           </div>
-          <a class="nav-contact border-b border-ink pb-2 transition hover:text-green" href="{% url 'portfolio:home' %}#contact" data-fr="Me contacter ↗" data-en="Contact me ↗">Me contacter ↗</a>
+          <a class="nav-contact border-b border-ink pb-2 transition hover:text-green" href="{% url 'portfolio:contact' %}" data-fr="Me contacter ↗" data-en="Contact me ↗">Me contacter ↗</a>
         </div>
       </nav>
     </header>
@@ -39,21 +43,29 @@
     <main>{% block content %}{% endblock %}</main>
 
     <footer class="site-footer relative isolate overflow-hidden bg-[#141915] text-paper" id="footer">
-      <div class="section-wrap relative z-10 grid gap-10 py-12 sm:py-14 md:grid-cols-[1.15fr_.85fr] md:gap-[9%] md:py-[68px]">
+      <div class="section-wrap footer-main relative z-10 grid gap-10 py-12 sm:py-14 md:grid-cols-[1.15fr_.85fr] md:gap-[9%] md:py-[68px]">
         <div class="footer-message reveal">
-          <p class="eyebrow !mb-4 !text-[#9dad98]">06 — <span data-fr="ON EN PARLE ?" data-en="LET'S TALK">ON EN PARLE ?</span></p>
+          <p class="eyebrow !mb-4 !text-[#9dad98]">07 — <span data-fr="ON EN PARLE ?" data-en="LET'S TALK">ON EN PARLE ?</span></p>
           <h2 class="mb-4 text-3xl font-semibold leading-tight tracking-[-.05em] md:text-5xl" data-fr="Une idée à construire ?" data-en="Have an idea to build?">Une idée à construire ?</h2>
           <p class="mb-6 max-w-[390px] text-[11px] leading-7 text-[#b5beb3]" data-fr="Développeur full stack basé à Yaoundé. Créons quelque chose d’utile ensemble." data-en="Full stack developer based in Yaoundé. Let's build something useful together.">Développeur full stack basé à Yaoundé. Créons quelque chose d’utile ensemble.</p>
-          <div class="flex flex-wrap items-center gap-3"><a class="footer-icon-link rounded bg-[#408b61] px-4 py-3 text-[10px] font-bold transition hover:-translate-y-0.5 hover:bg-[#59a779]" href="mailto:{{ profile.email }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .2v.2l7 4.7 7-4.7v-.2a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm14 2.6-6.4 4.3a1.1 1.1 0 0 1-1.2 0L5 9.3v8.2a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V9.3Z"/></svg><span data-fr="Me contacter ↗" data-en="Get in touch ↗">Me contacter ↗</span></a><a class="footer-email footer-icon-link rounded border border-white/15 px-4 py-3 font-mono text-[9px] text-[#d7ded4]" href="mailto:{{ profile.email }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .2v.2l7 4.7 7-4.7v-.2a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Z"/></svg>{{ profile.email }}</a></div>
+          <div class="flex flex-wrap items-center gap-3"><a class="footer-icon-link rounded bg-[#408b61] px-4 py-3 text-[10px] font-bold transition hover:-translate-y-0.5 hover:bg-[#59a779]" href="{% url 'portfolio:contact' %}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .2v.2l7 4.7 7-4.7v-.2a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Zm14 2.6-6.4 4.3a1.1 1.1 0 0 1-1.2 0L5 9.3v8.2a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V9.3Z"/></svg><span data-fr="Me contacter ↗" data-en="Get in touch ↗">Me contacter ↗</span></a><a class="footer-email footer-icon-link rounded border border-white/15 px-4 py-3 font-mono text-[9px] text-[#d7ded4]" href="mailto:{{ profile.email }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2 .2v.2l7 4.7 7-4.7v-.2a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5Z"/></svg>{{ profile.email }}</a></div>
         </div>
         <div class="footer-columns reveal grid grid-cols-2 gap-7 pt-1">
-          <div class="flex flex-col items-start gap-3"><p class="footer-label" data-fr="EXPLORER" data-en="EXPLORE">EXPLORER</p><a href="{% url 'portfolio:home' %}#projets" data-fr="Projets" data-en="Projects">Projets</a><a href="{% url 'portfolio:home' %}#parcours" data-fr="Parcours" data-en="Journey">Parcours</a><a href="{% url 'portfolio:home' %}#apropos" data-fr="À propos" data-en="About">À propos</a></div>
+          <div class="flex flex-col items-start gap-3"><p class="footer-label" data-fr="EXPLORER" data-en="EXPLORE">EXPLORER</p><a href="{% url 'portfolio:home' %}#projets" data-fr="Projets" data-en="Projects">Projets</a><a href="{% url 'portfolio:home' %}#parcours" data-fr="Parcours" data-en="Journey">Parcours</a><a href="{% url 'portfolio:home' %}#apropos" data-fr="À propos" data-en="About">À propos</a><a href="{% url 'portfolio:blog' %}" data-fr="Blog" data-en="Blog">Blog</a></div>
           <div class="flex flex-col items-start gap-3"><p class="footer-label" data-fr="SUIVRE" data-en="FOLLOW">SUIVRE</p><a class="social-icon-link" href="{{ profile.github }}" target="_blank" rel="noreferrer" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.1c-3.1.67-3.75-1.32-3.75-1.32-.5-1.28-1.24-1.62-1.24-1.62-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.62 1.22 3.26.94.1-.73.39-1.22.71-1.5-2.48-.28-5.1-1.24-5.1-5.52 0-1.22.44-2.22 1.16-3-.12-.28-.5-1.42.11-2.96 0 0 .95-.3 3.05 1.15a10.6 10.6 0 0 1 5.55 0c2.1-1.45 3.05-1.15 3.05-1.15.61 1.54.23 2.68.12 2.96.72.78 1.15 1.78 1.15 3 0 4.29-2.62 5.23-5.12 5.5.4.35.76 1.02.76 2.06v3.05c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>GitHub ↗</a><a class="social-icon-link" href="{{ profile.linkedin }}" target="_blank" rel="noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 2H3.55C2.69 2 2 2.68 2 3.52v16.96c0 .84.69 1.52 1.55 1.52h16.9c.85 0 1.55-.68 1.55-1.52V3.52c0-.84-.7-1.52-1.55-1.52ZM7.93 18.9H4.96V9.33h2.97v9.57ZM6.45 8.02a1.72 1.72 0 1 1 0-3.44 1.72 1.72 0 0 1 0 3.44Zm12.45 10.88h-2.97v-4.65c0-1.11-.02-2.54-1.55-2.54-1.56 0-1.8 1.21-1.8 2.46v4.73H9.61V9.33h2.85v1.31h.04c.4-.75 1.37-1.55 2.81-1.55 3.01 0 3.57 1.98 3.57 4.56v5.25Z"/></svg>LinkedIn ↗</a><a href="tel:{{ profile.phone_link }}">{{ profile.phone_display }}</a></div>
         </div>
       </div>
-      <div class="footer-bottom section-wrap relative z-10 grid gap-3 border-t border-white/15 py-5 text-center font-mono text-[8px] tracking-wide text-[#909b8e] sm:grid-cols-[1fr_auto] sm:items-center sm:text-left">
-        <span>© {% now "Y" %} TSAGNOU NOUPA STEVE VARREL <span class="footer-city">· YAOUNDÉ, CAMEROUN</span></span>
-        <a class="footer-top justify-self-center text-[#b9c4b7] transition hover:text-lime sm:justify-self-end" href="#top" data-fr="RETOUR EN HAUT ↑" data-en="BACK TO TOP ↑">RETOUR EN HAUT ↑</a>
+      <div class="footer-bottom section-wrap relative z-10 grid gap-4 border-t border-white/15 py-5 text-center font-mono text-[8px] tracking-wide text-[#909b8e] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:text-left">
+        <span>© {% now "Y" %} TSAGNOU NOUPA STEVE VARREL</span>
+        <div class="footer-theme-switch theme-switch" role="group" aria-label="Thème de couleur">
+          <button type="button" data-theme-choice="light" aria-pressed="true" aria-label="Thème clair">☼ <span data-fr="Clair" data-en="Light">Clair</span></button>
+          <button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Thème sombre">☾ <span data-fr="Sombre" data-en="Dark">Sombre</span></button>
+          <button type="button" data-theme-choice="auto" aria-pressed="false" aria-label="Thème automatique">◉ <span data-fr="Auto" data-en="Auto">Auto</span></button>
+        </div>
+        <div class="footer-meta flex flex-wrap items-center justify-center gap-x-5 gap-y-2 sm:justify-self-end">
+          <span class="footer-city">YAOUNDÉ, CAMEROUN</span>
+          <a class="footer-top text-[#b9c4b7] transition hover:text-lime" href="#top" data-fr="RETOUR EN HAUT ↑" data-en="BACK TO TOP ↑">RETOUR EN HAUT ↑</a>
+        </div>
       </div>
       <div class="footer-signature relative z-[1] flex h-[clamp(138px,20vw,275px)] items-end overflow-hidden" aria-hidden="true">
         <div class="footer-signature-track">
@@ -61,7 +73,7 @@
         </div>
       </div>
     </footer>
-    <script src="{% static 'portfolio/js/site.js' %}?v=portfolio-motion-20261123f" defer></script>
+    <script src="{% static 'portfolio/js/site.js' %}?v=footer-dark-dropmotion-v4-20261123" defer></script>
     {% block scripts %}{% endblock %}
   </body>
 </html>

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} — {{ profile.short_name }}{% endblock %}
+{% block meta_description %}{{ article.excerpt }}{% endblock %}
+{% block content %}
+<article class="article-page" id="article">
+  <div class="section-wrap article-shell">
+    <a class="article-back-link" href="{% url 'portfolio:blog' %}"><span aria-hidden="true">←</span><span data-fr="Tous les articles" data-en="All articles">Tous les articles</span></a>
+    <header class="article-header reveal"><div class="article-meta"><span>{{ article.category }}</span><span>{{ article.read_time }} <span data-fr="MIN DE LECTURE" data-en="MIN READ">MIN DE LECTURE</span></span><span data-fr="CARNET DE STEVE" data-en="STEVE'S JOURNAL">CARNET DE STEVE</span></div><h1 data-fr="{{ article.title }}" data-en="{{ article.title_en }}">{{ article.title }}</h1><p data-fr="{{ article.excerpt }}" data-en="{{ article.excerpt_en }}">{{ article.excerpt }}</p></header>
+    <div class="article-reading-layout">
+      <div class="article-body">
+        {% for section in article.body %}<section class="article-paragraph reveal" id="article-part-{{ forloop.counter }}"><span class="article-paragraph-index">0{{ forloop.counter }}</span><div><h2 data-fr="{{ section.title }}" data-en="{{ section.title_en }}">{{ section.title }}</h2><p data-fr="{{ section.text }}" data-en="{{ section.text_en }}">{{ section.text }}</p></div></section>{% endfor %}
+      </div>
+      <aside class="article-outline reveal" aria-label="Sommaire de l’article"><span class="article-outline-label" data-fr="DANS CET ARTICLE" data-en="IN THIS ARTICLE">DANS CET ARTICLE</span><nav>{% for section in article.body %}<a href="#article-part-{{ forloop.counter }}"><span>0{{ forloop.counter }}</span><strong data-fr="{{ section.title }}" data-en="{{ section.title_en }}">{{ section.title }}</strong></a>{% endfor %}</nav><div class="article-outline-bottom"><span>{{ article.category }} · {{ article.read_time }} min</span><a href="{% url 'portfolio:contact' %}" data-fr="Continuer la discussion ↗" data-en="Continue the conversation ↗">Continuer la discussion ↗</a></div></aside>
+    </div>
+    <footer class="article-end reveal"><p data-fr="Tu as un projet ou une question sur le sujet ?" data-en="Have a project or a question about this topic?">Tu as un projet ou une question sur le sujet ?</p><a class="button-dark" href="{% url 'portfolio:contact' %}"><span data-fr="Échangeons" data-en="Let's talk">Échangeons</span><span aria-hidden="true">↗</span></a></footer>
+    <nav class="article-more" aria-label="Autres articles"><span data-fr="À LIRE AUSSI" data-en="READ NEXT">À LIRE AUSSI</span>{% for item in articles %}{% if item.slug != article.slug %}<a href="{% url 'portfolio:article' item.slug %}"><span>{{ item.category }}</span><strong data-fr="{{ item.title }}" data-en="{{ item.title_en }}">{{ item.title }}</strong><span aria-hidden="true">↗</span></a>{% endif %}{% endfor %}</nav>
+  </div>
+</article>
+{% endblock %}

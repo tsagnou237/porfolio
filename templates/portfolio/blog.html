@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Blog — {{ profile.short_name }}{% endblock %}
+{% block meta_description %}Articles de {{ profile.short_name }} autour du développement web, de la conception d’applications et de la transmission du numérique.{% endblock %}
+{% block content %}
+<section class="blog-page" id="blog">
+  <div class="section-wrap blog-page-shell">
+    <header class="blog-page-intro reveal">
+      <p class="eyebrow" data-fr="CARNET · 05" data-en="JOURNAL · 05">CARNET · 05</p>
+      <div class="blog-page-heading"><h1><span data-fr="Des idées en" data-en="Ideas in">Des idées en</span><br><span class="text-green" data-fr="construction." data-en="progress.">construction.</span></h1><p data-fr="Des notes sur le développement, les outils utiles et l’apprentissage du numérique. Des réflexions nourries par mon travail de développeur et d’assistant de formation." data-en="Notes on development, useful tools and learning about technology. Thoughts shaped by my work as a developer and training assistant.">Des notes sur le développement, les outils utiles et l’apprentissage du numérique. Des réflexions nourries par mon travail de développeur et d’assistant de formation.</p></div>
+      <div class="blog-page-meta"><span data-fr="{{ articles|length }} ARTICLES" data-en="{{ articles|length }} ARTICLES">{{ articles|length }} ARTICLES</span><span data-fr="DÉVELOPPEMENT · CONCEPTION · TRANSMISSION" data-en="DEVELOPMENT · DESIGN · TEACHING">DÉVELOPPEMENT · CONCEPTION · TRANSMISSION</span></div>
+    </header>
+    <div class="blog-article-list">
+      {% for article in articles %}
+      <article class="blog-article-card reveal">
+        <div class="blog-article-card-index"><span>0{{ forloop.counter }}</span><span class="blog-article-mark" aria-hidden="true">{% if forloop.counter == 1 %}↗{% elif forloop.counter == 2 %}◎{% else %}✳{% endif %}</span></div>
+        <div class="blog-article-card-content"><div class="blog-article-meta"><span>{{ article.category }}</span><span>{{ article.read_time }} <span data-fr="MIN DE LECTURE" data-en="MIN READ">MIN DE LECTURE</span></span></div><h2><a href="{% url 'portfolio:article' article.slug %}" data-fr="{{ article.title }}" data-en="{{ article.title_en }}">{{ article.title }}</a></h2><p data-fr="{{ article.excerpt }}" data-en="{{ article.excerpt_en }}">{{ article.excerpt }}</p><a class="blog-read-link" href="{% url 'portfolio:article' article.slug %}"><span data-fr="Lire l’article" data-en="Read article">Lire l’article</span><span aria-hidden="true">↗</span></a></div>
+        <a class="blog-article-open" href="{% url 'portfolio:article' article.slug %}" aria-label="Lire : {{ article.title }}">↗</a>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="blog-page-footer reveal"><span data-fr="UNE QUESTION OU UN SUJET À EXPLORER ?" data-en="A QUESTION OR A TOPIC TO EXPLORE?">UNE QUESTION OU UN SUJET À EXPLORER ?</span><a href="{% url 'portfolio:contact' %}" data-fr="Écrivons la suite ensemble ↗" data-en="Let's write the next chapter together ↗">Écrivons la suite ensemble ↗</a></div>
+  </div>
+</section>
+{% endblock %}

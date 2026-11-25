@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Contact — {{ profile.short_name }}{% endblock %}
+{% block meta_description %}Contactez {{ profile.short_name }}, développeur full stack à Yaoundé, pour un projet web, une application ou une collaboration.{% endblock %}
+{% block content %}
+<section class="contact-page" id="contact">
+  <div class="contact-page-orbit" aria-hidden="true"></div>
+  <div class="section-wrap contact-page-layout">
+    <header class="contact-page-intro reveal">
+      <p class="eyebrow" data-fr="ÉCHANGEONS · 06" data-en="LET’S TALK · 06">ÉCHANGEONS · 06</p>
+      <div class="contact-page-title-row">
+        <div class="contact-page-title"><h1><span data-fr="Parlons d’un projet" data-en="Let's talk about a project">Parlons d’un projet</span><br /><span class="text-green" data-fr="clair et utile." data-en="that matters.">clair et utile.</span></h1><p class="contact-page-lead" data-fr="Site web, application ou accompagnement : raconte-moi ce que tu veux construire. Un premier message suffit pour ouvrir la discussion." data-en="A website, an application or some guidance: tell me what you want to build. A first message is all it takes to start the conversation.">Site web, application ou accompagnement : raconte-moi ce que tu veux construire. Un premier message suffit pour ouvrir la discussion.</p></div>
+        <aside class="contact-cadence" aria-label="Déroulement du premier échange">
+          <p class="eyebrow" data-fr="LE CADRE" data-en="THE APPROACH">LE CADRE</p>
+          <h2 data-fr="Une conversation, des étapes claires." data-en="A conversation, with clear next steps.">Une conversation, des étapes claires.</h2>
+          <div class="contact-cadence-step"><span>01</span><div><strong data-fr="On fait le point" data-en="We get the context">On fait le point</strong><p data-fr="Le besoin, le contexte et les personnes concernées." data-en="The need, the context and the people involved.">Le besoin, le contexte et les personnes concernées.</p></div></div>
+          <div class="contact-cadence-step"><span>02</span><div><strong data-fr="On choisit la suite" data-en="We choose what comes next">On choisit la suite</strong><p data-fr="Une piste concrète, adaptée au projet." data-en="A practical direction, adapted to the project.">Une piste concrète, adaptée au projet.</p></div></div>
+        </aside>
+      </div>
+      <div class="contact-availability"><span class="availability-dot"></span><span data-fr="Disponible pour missions et collaborations" data-en="Available for projects and collaborations">Disponible pour missions et collaborations</span></div>
+    </header>
+
+    <aside class="contact-info-panel reveal" aria-label="Coordonnées">
+      <div class="contact-info-heading"><p class="eyebrow" data-fr="PRENONS CONTACT" data-en="GET IN TOUCH">PRENONS CONTACT</p><span aria-hidden="true">↘</span></div>
+      <p class="contact-info-caption" data-fr="Écris-moi directement." data-en="Reach me directly.">Écris-moi directement.</p>
+      <p class="contact-info-description" data-fr="Pour une mission, une collaboration ou une question, retrouve ici les moyens de me joindre." data-en="For a project, a collaboration or a question, here are the ways to reach me.">Pour une mission, une collaboration ou une question, retrouve ici les moyens de me joindre.</p>
+      <div class="contact-details">
+        <a class="contact-detail" href="mailto:{{ profile.email }}"><span class="contact-detail-index">01 / EMAIL</span><strong>{{ profile.email }}</strong><span class="contact-detail-arrow" aria-hidden="true">↗</span></a>
+        <a class="contact-detail" href="tel:{{ profile.phone_link }}"><span class="contact-detail-index" data-fr="02 / TÉLÉPHONE" data-en="02 / PHONE">02 / TÉLÉPHONE</span><strong>{{ profile.phone_display }}</strong><span class="contact-detail-arrow" aria-hidden="true">↗</span></a>
+        <div class="contact-detail"><span class="contact-detail-index" data-fr="03 / LOCALISATION" data-en="03 / LOCATION">03 / LOCALISATION</span><strong>{{ profile.city }} · Remote</strong><span class="contact-detail-arrow" aria-hidden="true">⌖</span></div>
+      </div>
+      <div class="contact-info-bottom"><span class="contact-info-note" data-fr="Retrouve-moi aussi ici" data-en="Find me here too">Retrouve-moi aussi ici</span><div class="contact-socials"><a href="{{ profile.linkedin }}" target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a><a href="{{ profile.github }}" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></div></div>
+    </aside>
+
+    <div class="contact-form-wrap reveal">
+      <div class="contact-form-heading"><p class="eyebrow" data-fr="ENVOYER UN MESSAGE" data-en="SEND A MESSAGE">ENVOYER UN MESSAGE</p><span class="contact-form-step">01 — 04</span></div>
+      <h2 data-fr="Envoyez-moi un message." data-en="Send me a message.">Envoyez-moi un message.</h2>
+      <p class="contact-form-intro" data-fr="Quelques détails suffisent pour lancer la conversation." data-en="A few details are enough to start the conversation.">Quelques détails suffisent pour lancer la conversation.</p>
+      <p class="contact-required-note" data-fr="Tous les champs marqués d’un * sont obligatoires." data-en="All fields marked with * are required.">Tous les champs marqués d’un * sont obligatoires.</p>
+
+      <form class="contact-form" data-contact-form action="mailto:{{ profile.email }}" method="post" enctype="text/plain">
+        <div class="contact-form-row">
+          <label class="contact-field"><span><span data-fr="Nom complet" data-en="Full name">Nom complet</span> <i aria-hidden="true">*</i></span><input name="name" autocomplete="name" required maxlength="100" placeholder="Ex. Steve Varrel" data-placeholder-fr="Ex. Steve Varrel" data-placeholder-en="e.g. Steve Varrel" /></label>
+          <label class="contact-field"><span><span data-fr="Adresse e-mail" data-en="Email address">Adresse e-mail</span> <i aria-hidden="true">*</i></span><input type="email" name="email" autocomplete="email" required maxlength="254" placeholder="vous@exemple.com" data-placeholder-fr="vous@exemple.com" data-placeholder-en="you@example.com" /></label>
+        </div>
+        <label class="contact-field"><span><span data-fr="Sujet" data-en="Subject">Sujet</span> <i aria-hidden="true">*</i></span><select name="subject" required><option value="" selected disabled data-fr="Choisir un sujet" data-en="Choose a topic">Choisir un sujet</option><option value="Projet web" data-fr="Projet web" data-en="Web project">Projet web</option><option value="Application" data-fr="Application" data-en="Application">Application</option><option value="Formation" data-fr="Formation" data-en="Training">Formation</option><option value="Autre demande" data-fr="Autre demande" data-en="Other">Autre demande</option></select></label>
+        <label class="contact-field"><span><span data-fr="Ton message" data-en="Your message">Ton message</span> <i aria-hidden="true">*</i></span><textarea name="message" rows="5" maxlength="2000" required placeholder="Parle-moi du besoin, du contexte et de ce que tu aimerais construire…" data-placeholder-fr="Parle-moi du besoin, du contexte et de ce que tu aimerais construire…" data-placeholder-en="Tell me about the need, the context and what you would like to build…"></textarea></label>
+        <div class="contact-form-foot"><span class="contact-character-count"><span data-contact-count>0</span> / 2000</span><button class="button-dark contact-submit" type="submit"><span data-fr="Préparer le message" data-en="Prepare message">Préparer le message</span><span aria-hidden="true">↗</span></button></div>
+        <p class="contact-form-note" data-fr="Ta messagerie s’ouvrira avec le message prêt à envoyer." data-en="Your email app will open with the message ready to send.">Ta messagerie s’ouvrira avec le message prêt à envoyer.</p>
+        <p class="contact-form-status" data-contact-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+  <a class="contact-back-home" href="{% url 'portfolio:home' %}" data-fr="← Retour au portfolio" data-en="← Back to portfolio">← Retour au portfolio</a>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const contactForm = document.querySelector('[data-contact-form]');
+  const contactMessage = contactForm?.elements.message;
+  const contactCounter = document.querySelector('[data-contact-count]');
+  const contactStatus = document.querySelector('[data-contact-status]');
+  contactMessage?.addEventListener('input', () => {
+    if (contactCounter) contactCounter.textContent = String(contactMessage.value.length);
+  });
+  contactForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(contactForm);
+    const subject = `[Portfolio] ${data.get('subject')}`;
+    const body = [`Nom : ${data.get('name')}`, `E-mail : ${data.get('email')}`, `Sujet : ${data.get('subject')}`, '', data.get('message')].join('\n');
+    const language = document.documentElement.lang === 'en' ? 'en' : 'fr';
+    if (contactStatus) contactStatus.textContent = language === 'fr' ? 'Votre application e-mail va s’ouvrir. Il ne restera qu’à envoyer le message.' : 'Your email app is opening. You will only need to send the message.';
+    window.location.href = `mailto:{{ profile.email }}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+</script>
+{% endblock %}

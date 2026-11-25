@@ -22,6 +22,9 @@ languageButtons.forEach((languageButton) => languageButton.addEventListener('cli
   document.querySelectorAll('[data-fr][data-en]').forEach((element) => {
     element.textContent = element.dataset[language];
   });
+  document.querySelectorAll('[data-placeholder-fr][data-placeholder-en]').forEach((element) => {
+    element.placeholder = element.dataset[`placeholder${language === 'fr' ? 'Fr' : 'En'}`];
+  });
   const typewriter = document.querySelector('.typewriter-output');
   if (typewriter) {
     clearTimeout(typewriterTimer);
@@ -44,17 +47,16 @@ languageButtons.forEach((languageButton) => languageButton.addEventListener('cli
 const savedLanguage = localStorage.getItem('portfolio-language');
 if (savedLanguage && savedLanguage !== document.documentElement.lang) languageButtons[0]?.click();
 
-document.querySelectorAll('.project-grid .project-card, .timeline-item, .stats-grid .stat, .method-process .method-step').forEach((item) => {
-  const siblings = [...item.parentElement.children].filter((sibling) => sibling.matches('.project-card, .timeline-item, .stat, .method-step'));
-  item.style.setProperty('--reveal-delay', `${siblings.indexOf(item) * 130}ms`);
+document.querySelectorAll('.project-grid .project-card, .daily-tools-list .daily-tool, .timeline-item, .stats-grid .stat, .method-process .method-step').forEach((item) => {
+  const siblings = [...item.parentElement.children].filter((sibling) => sibling.matches('.project-card, .daily-tool, .timeline-item, .stat, .method-step'));
+  const step = item.matches('.daily-tool') ? 72 : 105;
+  item.style.setProperty('--reveal-delay', `${Math.min(siblings.indexOf(item), 5) * step}ms`);
 });
 const revealElements = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window) {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
+  const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
+      entry.target.classList.toggle('is-visible', entry.isIntersecting);
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
   revealElements.forEach((element) => revealObserver.observe(element));
@@ -198,6 +200,7 @@ const sectionLinks = document.querySelectorAll('.nav-links a[href*="#"]');
 const sectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
+    document.documentElement.dataset.activeSection = entry.target.id;
     document.querySelectorAll('main section.is-in-view').forEach((section) => section.classList.remove('is-in-view'));
     entry.target.classList.add('is-in-view');
     sectionLinks.forEach((link) => {
@@ -207,9 +210,9 @@ const sectionObserver = new IntersectionObserver((entries) => {
       else link.removeAttribute('aria-current');
     });
   });
-}, { rootMargin: '-25% 0px -60% 0px', threshold: 0 });
+}, { rootMargin: '-38% 0px -38% 0px', threshold: 0 });
 document.querySelectorAll('main section[id]').forEach((section) => {
-  if ([...sectionLinks].some((link) => link.hash === `#${section.id}`)) sectionObserver.observe(section);
+  sectionObserver.observe(section);
 });
 
 const ambientBackdrop = document.querySelector('.ambient-backdrop');
@@ -252,6 +255,7 @@ const moveFooterSignature = () => {
     const bounds = footerSignature.parentElement.getBoundingClientRect();
     const progress = Math.min(1, Math.max(0, (window.innerHeight - bounds.top) / (window.innerHeight + bounds.height)));
     const offset = (0.5 - progress) * 110;
+    if (bounds.top < window.innerHeight && bounds.bottom > 0) footerSignature.parentElement.classList.add('signature-entered');
     footerSignature.style.setProperty('--signature-shift', `${offset}px`);
     footerSignature.style.opacity = String(0.45 + progress * 0.35);
   });
@@ -267,14 +271,67 @@ const dailySection = document.querySelector('.daily-tools');
 const dailyLayout = document.querySelector('.daily-tools-layout');
 if (dailyTools.length && dailySection && dailyLayout) {
   const dailyWheel = dailySection.querySelector('.daily-tools-list');
+  const brandBackdrop = document.createElement('div');
+  brandBackdrop.className = 'daily-brand-backdrop';
+  brandBackdrop.setAttribute('aria-hidden', 'true');
+  brandBackdrop.innerHTML = '<div class="daily-brand-watermark"><span data-daily-brand-watermark></span><strong data-daily-brand-name></strong></div>';
+  dailySection.prepend(brandBackdrop);
+  const dailyOrbit = document.createElement('div');
+  dailyOrbit.className = 'daily-tools-orbit';
+  dailyTools.forEach((tool) => dailyOrbit.append(tool));
+  dailyWheel?.prepend(dailyOrbit);
   const wheelCenter = document.createElement('div');
   wheelCenter.className = 'daily-wheel-center';
-  wheelCenter.setAttribute('aria-live', 'polite');
-  wheelCenter.innerHTML = '<span class="daily-wheel-caption" data-fr="OUTIL ACTIF" data-en="ACTIVE TOOL">OUTIL ACTIF</span><span class="daily-wheel-active-mark" data-daily-active-mark></span><strong data-daily-active-label></strong><span class="daily-wheel-active-count" data-daily-active-count></span>';
+  wheelCenter.setAttribute('aria-live', 'off');
+  wheelCenter.innerHTML = '<span class="daily-wheel-caption" data-fr="LES OUTILS TOURNENT AUTOMATIQUEMENT" data-en="TOOLS ROTATE AUTOMATICALLY">LES OUTILS TOURNENT AUTOMATIQUEMENT</span><span class="daily-wheel-active-mark" data-daily-active-mark></span><strong data-daily-active-label></strong><span class="daily-wheel-active-count" data-daily-active-count></span>';
   dailyWheel?.append(wheelCenter);
   dailySection.classList.add('is-wheel');
 
+  const logoSlugs = [
+    { match: 'HTML & CSS', slugs: ['html5', 'css3'] },
+    { match: 'JavaScript', slugs: ['javascript'] },
+    { match: 'Python', slugs: ['python'] },
+    { match: 'Django', slugs: ['django'] },
+  ];
+  const genericBrandIcons = {
+    administration: '<svg viewBox="0 0 64 64"><rect x="10" y="12" width="44" height="16" rx="4"/><rect x="10" y="36" width="44" height="16" rx="4"/><path d="M20 20h.1M29 20h.1M37 20h10M20 44h.1M29 44h.1M37 44h10"/></svg>',
+    maintenance: '<svg viewBox="0 0 64 64"><path d="M39 12a18 18 0 0 0-22 22L9 42a7 7 0 0 0 10 10l8-8a18 18 0 0 0 22-22L39 32 30 23z"/><circle cx="17" cy="47" r="2"/></svg>',
+  };
+  const createToolLogos = (tool, className = '') => {
+    const name = tool.querySelector('h3')?.textContent?.trim() ?? '';
+    const brand = logoSlugs.find((item) => item.match === name);
+    const container = document.createElement('span');
+    container.className = `daily-brand-logos ${className}`.trim();
+    container.setAttribute('aria-hidden', 'true');
+    if (brand) {
+      brand.slugs.forEach((slug) => {
+        const image = document.createElement('img');
+        image.src = `https://cdn.simpleicons.org/${slug}/548b3f`;
+        image.alt = '';
+        image.width = 64;
+        image.height = 64;
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('error', () => {
+          const fallback = document.createElement('b');
+          fallback.className = 'daily-brand-fallback';
+          fallback.textContent = name.includes('HTML') ? '</>' : name === 'JavaScript' ? 'JS' : name === 'Python' ? 'Py' : 'dj';
+          image.replaceWith(fallback);
+        }, { once: true });
+        container.append(image);
+      });
+    } else {
+      const icon = document.createElement('span');
+      icon.innerHTML = name.toLowerCase().includes('administration') ? genericBrandIcons.administration : genericBrandIcons.maintenance;
+      container.append(icon.firstElementChild);
+    }
+    return container;
+  };
+
+  let wheelStep = 0;
+  let autoRotateTimer = 0;
   const setDailyState = (currentIndex, progress = currentIndex / dailyTools.length) => {
+    currentIndex = (currentIndex % dailyTools.length + dailyTools.length) % dailyTools.length;
     const activeTool = dailyTools[currentIndex];
     dailyTools.forEach((tool, index) => {
       tool.classList.toggle('is-active', index === currentIndex);
@@ -285,60 +342,151 @@ if (dailyTools.length && dailySection && dailyLayout) {
     const activeLabel = wheelCenter?.querySelector('[data-daily-active-label]');
     const activeMark = wheelCenter?.querySelector('[data-daily-active-mark]');
     const activeCount = wheelCenter?.querySelector('[data-daily-active-count]');
+    const brandName = brandBackdrop.querySelector('[data-daily-brand-name]');
+    const brandWatermark = brandBackdrop.querySelector('[data-daily-brand-watermark]');
     if (activeLabel && activeTool) activeLabel.textContent = activeTool.querySelector('h3')?.textContent ?? '';
     if (activeMark && activeTool) {
-      const mark = activeTool.querySelector('.daily-tool-mark');
-      if (mark && activeMark.dataset.index !== String(currentIndex)) {
-        activeMark.replaceChildren(mark.cloneNode(true));
+      if (activeMark.dataset.index !== String(currentIndex)) {
+        activeMark.replaceChildren(createToolLogos(activeTool));
         activeMark.dataset.index = String(currentIndex);
       }
+    }
+    if (brandName && brandWatermark && activeTool && brandWatermark.dataset.index !== String(currentIndex)) {
+      brandBackdrop.classList.remove('is-visible');
+      brandWatermark.replaceChildren(createToolLogos(activeTool));
+      brandName.textContent = activeTool.querySelector('h3')?.textContent ?? '';
+      brandWatermark.dataset.index = String(currentIndex);
+      requestAnimationFrame(() => brandBackdrop.classList.add('is-visible'));
     }
     if (activeCount) activeCount.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(dailyTools.length).padStart(2, '0')}`;
 
     if (dailyWheel) {
       const radius = Math.min(dailyWheel.clientWidth * 0.32, window.innerHeight * 0.24);
-      const rotation = -progress * Math.PI * 2;
       dailyTools.forEach((tool, index) => {
-        const angle = -Math.PI / 2 + index * Math.PI * 2 / dailyTools.length + rotation;
+        const angle = -Math.PI / 2 + index * Math.PI * 2 / dailyTools.length;
         tool.style.setProperty('--wheel-x', `${Math.cos(angle) * radius}px`);
         tool.style.setProperty('--wheel-y', `${Math.sin(angle) * radius}px`);
       });
-      dailyWheel.style.setProperty('--wheel-rotation', `${-progress * 360}deg`);
     }
   };
-
-  if (!reducedMotion.matches) {
-    dailySection.classList.add('is-sequenced');
-    dailySection.style.setProperty('--daily-sequence-length', `${dailyTools.length * 52}svh`);
-    let dailySequenceFrame = 0;
-    const updateDailySequence = () => {
-      cancelAnimationFrame(dailySequenceFrame);
-      dailySequenceFrame = requestAnimationFrame(() => {
-        const travel = dailySection.offsetHeight - dailyLayout.offsetHeight;
-        const progress = travel > 0
-          ? Math.min(1, Math.max(0, -dailySection.getBoundingClientRect().top / travel))
-          : 0;
-        const currentIndex = Math.min(dailyTools.length - 1, Math.floor(progress * dailyTools.length));
-        setDailyState(currentIndex, progress);
-      });
-    };
-    window.addEventListener('scroll', updateDailySequence, { passive: true });
-    window.addEventListener('resize', updateDailySequence);
-    updateDailySequence();
+  const rotateDailyWheel = (direction) => {
+    wheelStep += direction;
+    const index = (wheelStep % dailyTools.length + dailyTools.length) % dailyTools.length;
+    setDailyState(index, wheelStep / dailyTools.length);
+  };
+  const stopAutoRotate = () => {
+    window.clearTimeout(autoRotateTimer);
+    autoRotateTimer = 0;
+  };
+  const scheduleAutoRotate = (delay = 4000) => {
+    stopAutoRotate();
+    autoRotateTimer = window.setTimeout(() => {
+      autoRotateTimer = 0;
+      if (!dailySection.classList.contains('wheel-is-visible')) return;
+      rotateDailyWheel(1);
+      scheduleAutoRotate(4000);
+    }, delay);
+  };
+  setDailyState(0, 0);
+  if ('IntersectionObserver' in window) {
+    const dailyWheelObserver = new IntersectionObserver((entries) => {
+      const isVisible = entries.some((entry) => entry.isIntersecting);
+      dailySection.classList.toggle('wheel-is-visible', isVisible);
+      if (isVisible) scheduleAutoRotate(4000);
+      else stopAutoRotate();
+    }, { threshold: 0.15 });
+    dailyWheelObserver.observe(dailySection);
   } else {
-    setDailyState(0, 0);
-    window.addEventListener('resize', () => setDailyState(Number(dailyCurrent?.textContent ?? 1) - 1));
+    dailySection.classList.add('wheel-is-visible');
+    rotateDailyWheel(1);
+    scheduleAutoRotate(4000);
   }
+  window.addEventListener('resize', () => {
+    const index = (wheelStep % dailyTools.length + dailyTools.length) % dailyTools.length;
+    setDailyState(index, wheelStep / dailyTools.length);
+  });
+}
 
-  if (reducedMotion.matches && 'IntersectionObserver' in window) {
-  const dailyToolsObserver = new IntersectionObserver((entries) => {
-    const visibleEntry = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visibleEntry) return;
-    const currentIndex = Number(visibleEntry.target.dataset.dailyIndex);
-    setDailyState(currentIndex - 1, currentIndex / dailyTools.length);
-  }, { rootMargin: '-38% 0px -38% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
-  dailyTools.forEach((tool) => dailyToolsObserver.observe(tool));
-  }
+const backgroundCompareMode = new URLSearchParams(window.location.search).get('fonds') === 'variantes';
+if (backgroundCompareMode) {
+  const backgroundOptions = [
+    { id: 'paper', fr: 'Papier doux', en: 'Soft paper', detailFr: 'Sobre et chaleureux', detailEn: 'Quiet and warm' },
+    { id: 'grid', fr: 'Trame fine', en: 'Fine grid', detailFr: 'Précis et technique', detailEn: 'Precise and technical' },
+    { id: 'mesh', fr: 'Halo diffus', en: 'Soft mesh', detailFr: 'Profond et organique', detailEn: 'Deep and organic' },
+    { id: 'aurora', fr: 'Aurore légère', en: 'Light aurora', detailFr: 'Fluide et vivant', detailEn: 'Fluid and lively' },
+  ];
+  const panel = document.createElement('aside');
+  panel.className = 'background-compare-panel';
+  panel.setAttribute('aria-label', 'Comparateur des fonds');
+  panel.innerHTML = '<div class="background-compare-heading"><div><span class="background-compare-kicker">PORTFOLIO · LAB</span><strong data-fr="Compare les ambiances" data-en="Compare backgrounds">Compare les ambiances</strong><span class="background-compare-help" data-fr="Choisis un fond : il s’applique à toute la page." data-en="Choose a background to apply it across the page.">Choisis un fond : il s’applique à toute la page.</span></div><button class="background-compare-close" type="button" aria-label="Fermer le comparateur">×</button></div><div class="background-compare-options"></div>';
+  document.body.append(panel);
+  const optionContainer = panel.querySelector('.background-compare-options');
+  backgroundOptions.forEach((option) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'background-compare-option';
+    button.dataset.backgroundChoice = option.id;
+    button.setAttribute('aria-pressed', String(option.id === 'paper'));
+    button.innerHTML = `<span class="background-compare-swatch" data-preview-style="${option.id}" aria-hidden="true"></span><span class="background-compare-option-copy"><strong data-fr="${option.fr}" data-en="${option.en}">${option.fr}</strong><small data-fr="${option.detailFr}" data-en="${option.detailEn}">${option.detailFr}</small></span>`;
+    button.addEventListener('click', () => {
+      document.documentElement.dataset.backgroundStyle = option.id;
+      panel.querySelectorAll('[data-background-choice]').forEach((choice) => {
+        choice.setAttribute('aria-pressed', String(choice === button));
+      });
+    });
+    optionContainer.append(button);
+  });
+  document.documentElement.dataset.backgroundStyle = 'paper';
+  panel.querySelector('.background-compare-close')?.addEventListener('click', () => {
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.delete('fonds');
+    history.replaceState(null, '', `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+    document.documentElement.removeAttribute('data-background-style');
+    panel.remove();
+  });
+}
+
+const fontCompareMode = new URLSearchParams(window.location.search).get('police') === 'variantes';
+if (fontCompareMode) {
+  const fontOptions = [
+    { id: 'manrope', fr: 'Manrope', en: 'Manrope', detailFr: 'Actuelle · nette et moderne', detailEn: 'Current · crisp and modern' },
+    { id: 'space', fr: 'Space Grotesk + DM Sans', en: 'Space Grotesk + DM Sans', detailFr: 'Technique et affirmée', detailEn: 'Technical and distinctive' },
+    { id: 'jakarta', fr: 'Plus Jakarta Sans', en: 'Plus Jakarta Sans', detailFr: 'Doux et contemporain', detailEn: 'Soft and contemporary' },
+    { id: 'editorial', fr: 'Lora + Manrope', en: 'Lora + Manrope', detailFr: 'Éditorial et élégant', detailEn: 'Editorial and elegant' },
+    { id: 'inter', fr: 'Inter', en: 'Inter', detailFr: 'Sobre et très lisible', detailEn: 'Neutral and highly readable' },
+  ];
+  const fontStylesheet = document.createElement('link');
+  fontStylesheet.rel = 'stylesheet';
+  fontStylesheet.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap';
+  document.head.append(fontStylesheet);
+
+  const panel = document.createElement('aside');
+  panel.className = 'font-compare-panel';
+  panel.setAttribute('aria-label', 'Comparateur des polices');
+  panel.innerHTML = '<div class="background-compare-heading"><div><span class="background-compare-kicker">PORTFOLIO · TYPOGRAPHIE</span><strong data-fr="Compare les polices" data-en="Compare typefaces">Compare les polices</strong><span class="background-compare-help" data-fr="Chaque choix s’applique aux titres et aux textes du site." data-en="Each choice updates the headings and text across the site.">Chaque choix s’applique aux titres et aux textes du site.</span></div><button class="background-compare-close" type="button" aria-label="Fermer le comparateur de polices">×</button></div><div class="font-compare-options"></div>';
+  document.body.append(panel);
+  const optionContainer = panel.querySelector('.font-compare-options');
+  fontOptions.forEach((option) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'font-compare-option';
+    button.dataset.fontChoice = option.id;
+    button.setAttribute('aria-pressed', String(option.id === 'space'));
+    button.innerHTML = `<span class="font-compare-sample" data-sample-font="${option.id}" aria-hidden="true">Aa</span><span class="font-compare-option-copy"><strong data-fr="${option.fr}" data-en="${option.en}">${option.fr}</strong><small data-fr="${option.detailFr}" data-en="${option.detailEn}">${option.detailFr}</small></span>`;
+    button.addEventListener('click', () => {
+      document.documentElement.dataset.fontStyle = option.id;
+      panel.querySelectorAll('[data-font-choice]').forEach((choice) => {
+        choice.setAttribute('aria-pressed', String(choice === button));
+      });
+    });
+    optionContainer.append(button);
+  });
+  document.documentElement.dataset.fontStyle = 'space';
+  panel.querySelector('.background-compare-close')?.addEventListener('click', () => {
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.delete('police');
+    history.replaceState(null, '', `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+    document.documentElement.removeAttribute('data-font-style');
+    panel.remove();
+  });
 }
